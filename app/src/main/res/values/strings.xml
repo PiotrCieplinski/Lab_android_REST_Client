@@ -15,4 +15,6 @@
     <string name="invalid_url">Niepoprawny link URL</string>
     <!--Nazwa główenj aktywności-->
     <string name="title_activity_main">MainActivity</string>
+    <string name="data_read_error">Błąd odczytu danych</string>
+    <string name="city_not_found">Nie odnaleziono miasta</string>
 </resources>
