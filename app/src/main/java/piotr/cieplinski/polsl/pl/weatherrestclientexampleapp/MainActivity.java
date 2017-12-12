@@ -35,21 +35,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // automatycznie wygenerowany kod przygotowujący rozkład do wyświetlenia i konfigurujący pasek Toolbar
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // utwórz adapter ArrayAdapter łączący obiekt weatherList z widokiem weatherListView
-        weatherListView = (ListView) findViewById(R.id.weatherListView);
+        weatherListView = findViewById(R.id.weatherListView);
         weatherArrayAdapter = new WeatherArrayAdapter(this, weatherList);
         weatherListView.setAdapter(weatherArrayAdapter);
 
         // skonfiguruj FloatingActionButton służący do ukrywania klawiatury i wysłania żądania do usługi sieciowej
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // odczytaj tekst z obiektu locationEditText i utwórz obiekt URL odwołujący się do usługi sieciowej
-                EditText locationEditText = (EditText) findViewById(R.id.locationEditText);
+                EditText locationEditText = findViewById(R.id.locationEditText);
                 URL url = createURL(locationEditText.getText().toString());
 
                 // ukryj klawiaturę i uruchom zadanie GetWeatherTask pobierające w oddzielnym wątku
@@ -104,9 +104,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected JSONObject doInBackground(URL... params) {
             HttpURLConnection connection = null;
+
             try {
                 connection = (HttpURLConnection) params[0].openConnection();
                 int response = connection.getResponseCode();
+
                 if(response == HttpURLConnection.HTTP_OK) {
                     StringBuilder builder = new StringBuilder();
 
@@ -116,13 +118,14 @@ public class MainActivity extends AppCompatActivity {
                         while((line = reader.readLine()) != null) {
                             builder.append(line);
                         }
+
                     } catch (IOException e) {
                         Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.read_error, Snackbar.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                     return new JSONObject(builder.toString());
                 } else {
-                    Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.connect_error, Snackbar.LENGTH_LONG).show();
+                    checkMessage(connection.getResponseMessage()); //sprawdzamy co poszło nie tak
                 }
             } catch (Exception e) {
                 Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.connect_error, Snackbar.LENGTH_LONG).show();
@@ -138,7 +141,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(JSONObject weather) {
-            convertJSONtoArrayList(weather); // ponownie wypełnij obiekt weatherList
+            if(weather != null) {
+                convertJSONtoArrayList(weather); // ponownie wypełnij obiekt weatherList
+            } else {
+                weatherList.clear(); //czyścimy listę ze starych danych
+            }
             weatherArrayAdapter.notifyDataSetChanged(); // odśwież wiązania elementów listy ListView
             weatherListView.smoothScrollToPosition(0); // przewiń do góry
         }
@@ -169,6 +176,16 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch(JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void checkMessage(String message) {
+        switch(message) {
+            case "Not Found":
+                Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.city_not_found, Snackbar.LENGTH_LONG).show();
+                break;
+            default:
+                Snackbar.make(findViewById(R.id.coordinatorLayout), R.string.connect_error, Snackbar.LENGTH_LONG).show();
         }
     }
 }
