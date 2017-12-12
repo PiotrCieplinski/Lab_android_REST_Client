@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Pogodowy przykład REST Client App</string>
+    <!--Tutaj należy podać swój klucz do API, aby go wygenerować nalezy założyć konto na stronie OpenWeatherMap.org-->
+    <string name="api_key">5761299fe7dd98b04ea8815a6f0126b5</string>
+    <!-- Stała część adresu URL, z którego będziemy pobierać dane-->
+    <string name="web_service_url">http://api.openweathermap.org/data/2.5/forecast?q=</string>
+    <string name="weather_condition_image">Graficzna reprezentacja warunków pogodowych</string>
+    <string name="high_temp">Najwyższa: %s</string>
+    <string name="low_temp">Najniższa: %s</string>
+    <string name="day_description">%1$s: %2$s</string>
+    <string name="humidity">Wilgotność: %s</string>
+    <string name="hint_text">Wpisz nazwę miasta (np. Warszawa, PL)</string>
+    <string name="read_error">Błąd ładowania danych opisujących pogodę</string>
+    <string name="connect_error">Błąd połączenia z serwisem OpenWeatherMap.org</string>
+    <string name="invalid_url">Niepoprawny link URL</string>
+    <!--Nazwa główenj aktywności-->
+    <string name="title_activity_main">MainActivity</string>
+</resources>
